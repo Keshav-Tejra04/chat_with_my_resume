@@ -28,10 +28,9 @@ generation_config = {
 # 3. Initialize FastAPI
 app = FastAPI()
 
-# 4. Setup CORS (Allows Frontend to talk to Backend)
+# 4. Setup CORS 
 origins = [
-    "http://localhost:5173", # Default Vite port
-    "http://localhost:3000",
+    "http://localhost:5173", 
 ]
 
 app.add_middleware(
@@ -43,7 +42,6 @@ app.add_middleware(
 )
 
 # 5. Global Chat Session Storage (In-memory for skeleton)
-# In production, use a Database (SQLite/Postgres) and session IDs.
 chat_session = None
 
 # Ensure uploads directory exists
@@ -65,23 +63,18 @@ async def upload_resume(file: UploadFile = File(...)):
     """
     global chat_session
     try:
-        # Save file locally
         file_path = os.path.join(UPLOAD_DIR, file.filename)
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
-        # Upload to Gemini Files API
-        # Note: Large files might require waiting for processing state
         gemini_file = genai.upload_file(file_path, mime_type=file.content_type)
         
-        # Initialize Model with the file context
         model = genai.GenerativeModel(
             model_name="gemini-1.5-flash",
             generation_config=generation_config,
             system_instruction="You are a helpful assistant. You will answer questions based strictly on the provided resume file. If the answer is not in the resume, say you don't know."
         )
 
-        # Start a chat session with the file in history
         chat_session = model.start_chat(
             history=[
                 {
@@ -102,9 +95,6 @@ async def upload_resume(file: UploadFile = File(...)):
 
 @app.post("/chat")
 async def chat_endpoint(request: ChatRequest):
-    """
-    Endpoint to send a message to the active chat session.
-    """
     global chat_session
     if not chat_session:
         raise HTTPException(status_code=400, detail="No resume uploaded. Please upload a resume first.")
@@ -115,8 +105,5 @@ async def chat_endpoint(request: ChatRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# Default "Permanent" Resume Loader (Optional Logic)
-# You can call this on startup if you want your resume loaded by default.
 def load_default_resume():
-    # Logic to load 'my_permanent_resume.pdf' from a specific folder
     pass
