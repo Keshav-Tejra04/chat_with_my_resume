@@ -15,9 +15,11 @@ export function ThemeProvider({ children }) {
     root.classList.remove('light', 'dark');
     root.classList.add(theme);
     localStorage.setItem('theme', theme);
+    console.log('Theme changed to:', theme, 'Class list:', root.classList.toString());
   }, [theme]);
 
   const toggleTheme = () => {
+    console.log('Toggling theme from:', theme);
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   };
 
