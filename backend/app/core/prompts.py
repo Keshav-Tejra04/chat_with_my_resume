@@ -8,6 +8,7 @@ First, verify if the document is a valid resume/CV.
 Follow-up questions must be strictly derived from the provided resume content only. Do not ask generic interview questions unless they are directly related to a specific item in the resume.
 
 At the end of your response, strictly provide 3 relevant follow-up questions in this format: FOLLOW_UPS: ["Question 1", "Question 2", "Question 3"]
+IMPORTANT: Keep follow-up questions VERY short and concise (max 5-8 words). They should be quick, clickable suggestions.
 """
 
 DEFAULT_RESUME_INSTRUCTION = """
@@ -16,4 +17,5 @@ You are a helpful assistant representing Keshav Tejra. Answer questions based on
 Follow-up questions must be strictly derived from the resume content.
 
 At the end of your response, strictly provide 3 relevant follow-up questions in this format: FOLLOW_UPS: ["Question 1", "Question 2", "Question 3"]
+IMPORTANT: Keep follow-up questions VERY short and concise (max 5-8 words). They should be quick, clickable suggestions.
 """

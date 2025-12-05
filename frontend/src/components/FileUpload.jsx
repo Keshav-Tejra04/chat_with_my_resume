@@ -34,19 +34,19 @@ export default function FileUpload() {
       <div className={`
         flex items-center justify-center gap-2 w-full p-3 rounded-xl border border-dashed transition-all duration-200
         ${isUploading 
-          ? 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700' 
-          : 'bg-white dark:bg-gray-900 border-blue-300 dark:border-blue-700 hover:border-blue-500 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20'
+          ? 'bg-gray-50 dark:bg-[#2f2f2f] border-gray-200 dark:border-white/5' 
+          : 'bg-white dark:bg-[#2f2f2f] border-gray-300 dark:border-white/10 hover:border-gray-400 dark:hover:border-white/20 hover:bg-gray-50 dark:hover:bg-[#3f3f3f]'
         }
       `}>
         {isUploading ? (
           <>
-            <Loader2 className="w-4 h-4 animate-spin text-blue-600 dark:text-blue-400" />
-            <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Uploading...</span>
+            <Loader2 className="w-4 h-4 animate-spin text-gray-600 dark:text-gray-400" />
+            <span className="text-sm font-medium text-gray-500 dark:text-gray-500">Uploading...</span>
           </>
         ) : (
           <>
-            <Upload className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-            <span className="text-sm font-medium text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300">
+            <Upload className="w-4 h-4 text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-200" />
+            <span className="text-sm font-medium text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-200">
               Upload PDF
             </span>
           </>
