@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MessageSquare, Menu, X, Github, Linkedin } from 'lucide-react';
+import { MessageSquare, Menu, X, Github, Linkedin, FileText, Info } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import FileUpload from './FileUpload';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -8,7 +8,7 @@ export default function Layout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="flex h-screen bg-gray-100 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-300 overflow-hidden">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-300 overflow-hidden font-sans">
       {/* Mobile Sidebar Overlay */}
       <AnimatePresence>
         {isSidebarOpen && (
@@ -17,7 +17,7 @@ export default function Layout({ children }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsSidebarOpen(false)}
-            className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-sm"
           />
         )}
       </AnimatePresence>
@@ -28,48 +28,54 @@ export default function Layout({ children }) {
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
-        <div className="p-6 flex items-center justify-between border-b border-gray-200 dark:border-gray-800">
+        <div className="p-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
+            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-600/20">
               <MessageSquare className="w-6 h-6 text-white" />
             </div>
-            <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
-              Resume Chat
-            </h1>
+            <div>
+              <h1 className="text-lg font-bold text-gray-900 dark:text-white leading-tight">
+                Resume Chat
+              </h1>
+            </div>
           </div>
           <button 
             onClick={() => setIsSidebarOpen(false)}
-            className="md:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
+            className="md:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto py-6">
-          <div className="px-4 mb-8">
-            <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 px-2">
-              Context
-            </h2>
+        <div className="flex-1 overflow-y-auto py-4 space-y-8">
+          <div className="px-6">
+            <div className="flex items-center gap-2 mb-4 text-sm font-semibold text-gray-400 uppercase tracking-wider">
+              <FileText className="w-4 h-4" />
+              <span>Resume Context</span>
+            </div>
             <FileUpload />
           </div>
 
-          <div className="px-6">
-            <div className="p-4 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/50">
-              <h3 className="font-semibold text-blue-700 dark:text-blue-300 mb-2">About</h3>
-              <p className="text-sm text-blue-600/80 dark:text-blue-300/70">
-                This AI assistant is trained on Keshav Tejra's resume. Ask about skills, experience, or projects!
+          <div className="px-6">    
+            <div className="flex items-center gap-2 mb-4 text-sm font-semibold text-gray-400 uppercase tracking-wider">
+              <Info className="w-4 h-4" />
+              <span>About Me</span>
+            </div>
+            <div className="p-5 rounded-2xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800">
+              <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                I am a passionate developer. This AI assistant is trained on my resume to answer your questions about my skills, experience, and projects.
               </p>
             </div>
           </div>
         </div>
 
-        <div className="p-4 border-t border-gray-200 dark:border-gray-800">
+        <div className="p-6 border-t border-gray-100 dark:border-gray-800">
           <div className="flex items-center justify-between">
             <div className="flex gap-2">
-              <a href="#" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-gray-500 dark:text-gray-400">
+              <a href="#" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white">
                 <Github className="w-5 h-5" />
               </a>
-              <a href="#" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-gray-500 dark:text-gray-400">
+              <a href="#" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">
                 <Linkedin className="w-5 h-5" />
               </a>
             </div>
@@ -79,18 +85,18 @@ export default function Layout({ children }) {
       </motion.aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col h-full relative">
-        <header className="h-16 md:hidden flex items-center px-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+      <main className="flex-1 flex flex-col h-full relative bg-white/50 dark:bg-gray-950/50">
+        <header className="h-16 md:hidden flex items-center px-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 sticky top-0 z-30">
           <button
             onClick={() => setIsSidebarOpen(true)}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
           >
             <Menu className="w-6 h-6" />
           </button>
           <span className="ml-4 font-semibold">Chat</span>
         </header>
 
-        <div className="flex-1 p-4 md:p-6 overflow-hidden">
+        <div className="flex-1 overflow-hidden relative">
           {children}
         </div>
       </main>
