@@ -7,9 +7,11 @@ from pydantic import BaseModel
 
 router = APIRouter()
 
+from typing import Optional
+
 class ChatRequest(BaseModel):
     message: str
-    session_id: str = None
+    session_id: Optional[str] = None
 
 @router.post("/upload")
 async def upload_resume(file: UploadFile = File(...)):

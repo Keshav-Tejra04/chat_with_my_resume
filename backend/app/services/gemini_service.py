@@ -24,7 +24,7 @@ class GeminiService:
                 gemini_file = genai.upload_file(self.default_resume_path, mime_type="application/pdf")
                 
                 self.default_model = genai.GenerativeModel(
-                    model_name="gemini-1.5-flash",
+                    model_name="gemini-2.0-flash",
                     generation_config=settings.GENERATION_CONFIG,
                     system_instruction="You are a helpful assistant representing Keshav Tejra. Answer questions based on the provided resume. Be professional and concise."
                 )
@@ -52,7 +52,7 @@ class GeminiService:
             raise Exception("No resume available to chat with.")
 
         model = genai.GenerativeModel(
-            model_name="gemini-1.5-flash",
+            model_name="gemini-2.0-flash",
             generation_config=settings.GENERATION_CONFIG,
             system_instruction=system_instruction
         )
