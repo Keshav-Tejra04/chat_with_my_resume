@@ -27,11 +27,12 @@ export const uploadResume = async (file) => {
     }
 };
 
-export const sendChatMessage = async (message, sessionId = null) => {
+export const sendChatMessage = async (message, sessionId = null, fileUri = null) => {
     try {
         const response = await axios.post(`${API_BASE_URL}/chat`, {
             message,
-            session_id: sessionId
+            session_id: sessionId,
+            file_uri: fileUri
         });
         return response.data;
     } catch (error) {

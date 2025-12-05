@@ -4,14 +4,14 @@ from app.core.config import settings
 import os
 import shutil
 from pydantic import BaseModel
+from typing import Optional
 
 router = APIRouter()
-
-from typing import Optional
 
 class ChatRequest(BaseModel):
     message: str
     session_id: Optional[str] = None
+    file_uri: Optional[str] = None
 
 @router.post("/upload")
 async def upload_resume(file: UploadFile = File(...)):
@@ -23,8 +23,16 @@ async def upload_resume(file: UploadFile = File(...)):
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
         
-        session_id = gemini_service.create_session(file_path)
-        return {"session_id": session_id, "message": "Resume uploaded and session started."}
+        session_id, file_uri = gemini_service.create_session(file_path=file_path)
+        
+        # Cleanup: Delete the local file after uploading to Gemini
+        # We don't want to store user resumes permanently on the server
+        try:
+            os.remove(file_path)
+        except Exception as e:
+            print(f"Error deleting temp file: {e}")
+
+        return {"session_id": session_id, "file_uri": file_uri, "message": "Resume uploaded and session started."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -35,15 +43,14 @@ async def chat(request: ChatRequest):
     If no session_id is provided, tries to use the default resume session.
     """
     try:
-        # If session_id is missing, we might want to start a default session
-        # But for now, let's assume the frontend handles session_id or we create one
         if not request.session_id:
              # Create a default session if one doesn't exist for this user context
-             # Since we don't have user auth, we just create a new session with default resume
-             request.session_id = gemini_service.create_session()
+             session_id, _ = gemini_service.create_session(file_uri=request.file_uri)
+             request.session_id = session_id
              
-        response_text = gemini_service.get_chat_response(request.session_id, request.message)
-        return {"response": response_text, "session_id": request.session_id}
+        response_text, new_session_id = gemini_service.get_chat_response(request.session_id, request.message, request.file_uri)
+        
+        return {"response": response_text, "session_id": new_session_id}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

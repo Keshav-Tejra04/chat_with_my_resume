@@ -1,47 +1,57 @@
-import React, { useRef } from 'react';
-import { Upload, FileText, Loader2 } from 'lucide-react';
+import React, { useCallback } from 'react';
 import { useChat } from '../context/ChatContext';
-import { motion } from 'framer-motion';
+import { Upload, Loader2, FileText } from 'lucide-react';
 
 export default function FileUpload() {
   const { handleUpload, isUploading } = useChat();
-  const fileInputRef = useRef(null);
 
-  const onFileChange = (e) => {
+  const onFileChange = useCallback(async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      handleUpload(file);
+    if (!file) return;
+
+    if (file.type !== 'application/pdf') {
+      alert('Please upload a PDF file');
+      return;
     }
-  };
+
+    try {
+      await handleUpload(file);
+    } catch (error) {
+      console.error('Upload failed:', error);
+      alert('Failed to upload resume');
+    }
+  }, [handleUpload]);
 
   return (
-    <div className="p-4">
+    <div className="relative group">
       <input
         type="file"
         accept=".pdf"
-        className="hidden"
-        ref={fileInputRef}
         onChange={onFileChange}
-      />
-      <motion.button
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        onClick={() => fileInputRef.current?.click()}
         disabled={isUploading}
-        className="w-full flex items-center justify-center gap-2 p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl hover:border-blue-500 dark:hover:border-blue-400 transition-colors bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-300"
-      >
+        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 disabled:cursor-not-allowed"
+      />
+      <div className={`
+        flex items-center justify-center gap-2 w-full p-3 rounded-xl border border-dashed transition-all duration-200
+        ${isUploading 
+          ? 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700' 
+          : 'bg-white dark:bg-gray-900 border-blue-300 dark:border-blue-700 hover:border-blue-500 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20'
+        }
+      `}>
         {isUploading ? (
-          <Loader2 className="w-5 h-5 animate-spin" />
+          <>
+            <Loader2 className="w-4 h-4 animate-spin text-blue-600 dark:text-blue-400" />
+            <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Uploading...</span>
+          </>
         ) : (
-          <Upload className="w-5 h-5" />
+          <>
+            <Upload className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            <span className="text-sm font-medium text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300">
+              Upload PDF
+            </span>
+          </>
         )}
-        <span className="font-medium">
-          {isUploading ? 'Uploading...' : 'Upload Resume (PDF)'}
-        </span>
-      </motion.button>
-      <p className="text-xs text-center mt-2 text-gray-400">
-        Upload to chat with a specific resume
-      </p>
+      </div>
     </div>
   );
 }

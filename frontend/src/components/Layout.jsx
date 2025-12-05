@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { MessageSquare, Menu, X, Github, Linkedin, FileText, Info } from 'lucide-react';
+import { MessageSquare, Menu, X, Github, Linkedin, FileText, Info, Upload, RotateCcw } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import FileUpload from './FileUpload';
+import { useChat } from '../context/ChatContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Layout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { resumeName, resetToDefault } = useChat();
 
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-300 overflow-hidden font-sans">
@@ -48,14 +50,6 @@ export default function Layout({ children }) {
         </div>
 
         <div className="flex-1 overflow-y-auto py-4 space-y-8">
-          <div className="px-6">
-            <div className="flex items-center gap-2 mb-4 text-sm font-semibold text-gray-400 uppercase tracking-wider">
-              <FileText className="w-4 h-4" />
-              <span>Resume Context</span>
-            </div>
-            <FileUpload />
-          </div>
-
           <div className="px-6">    
             <div className="flex items-center gap-2 mb-4 text-sm font-semibold text-gray-400 uppercase tracking-wider">
               <Info className="w-4 h-4" />
@@ -67,10 +61,33 @@ export default function Layout({ children }) {
               </p>
             </div>
           </div>
+
+          {resumeName !== "Keshav Tejra" && (
+            <div className="px-6">
+               <button
+                  onClick={resetToDefault}
+                  className="flex items-center gap-2 w-full p-3 rounded-xl text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors border border-blue-100 dark:border-blue-800"
+               >
+                  <RotateCcw className="w-4 h-4" />
+                  Back to Keshav's Resume
+               </button>
+            </div>
+          )}
+
         </div>
 
-        <div className="p-6 border-t border-gray-100 dark:border-gray-800">
-          <div className="flex items-center justify-between">
+        <div className="p-6 border-t border-gray-100 dark:border-gray-800 space-y-4">
+            {/* Upload Section */}
+            <div className="p-4 rounded-2xl bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/30">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                    Want to test on your own resume?
+                </h3>
+                <div className="mt-2">
+                    <FileUpload />
+                </div>
+            </div>
+
+          <div className="flex items-center justify-between pt-2">
             <div className="flex gap-2">
               <a href="#" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white">
                 <Github className="w-5 h-5" />

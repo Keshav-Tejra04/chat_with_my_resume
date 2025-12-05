@@ -1,16 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, User, Bot, Loader2, Sparkles, MessageSquare } from 'lucide-react';
+import { Send, User, Bot, Loader2, Sparkles, MessageSquare, FileText } from 'lucide-react';
 import { useChat } from '../context/ChatContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function ChatInterface() {
-  const { messages, sendMessage, isTyping } = useChat();
+  const { messages, sendMessage, isTyping, resumeName } = useChat();
   const [input, setInput] = useState('');
   const messagesEndRef = useRef(null);
 
-  // Determine if chat has started (more than just the initial bot greeting)
-  // Assuming the first message is always the bot greeting.
   const hasStarted = messages.length > 1;
+  const isPortfolio = resumeName === "Keshav Tejra";
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -33,11 +32,32 @@ export default function ChatInterface() {
     sendMessage(suggestion);
   };
 
-  const suggestions = [
+  // Helper to parse message and extract follow-ups
+  const parseMessage = (text) => {
+    const followUpMarker = "FOLLOW_UPS:";
+    if (text.includes(followUpMarker)) {
+      const [mainText, followUpsString] = text.split(followUpMarker);
+      try {
+        const followUps = JSON.parse(followUpsString.trim());
+        return { mainText: mainText.trim(), followUps };
+      } catch (e) {
+        console.error("Failed to parse follow-ups", e);
+        return { mainText: text, followUps: [] };
+      }
+    }
+    return { mainText: text, followUps: [] };
+  };
+
+  const suggestions = isPortfolio ? [
     "What are your core skills?",
     "Tell me about your projects",
     "What is your experience?",
     "Download Resume"
+  ] : [
+    "Summarize this resume",
+    "What are the key skills?",
+    "Experience highlights",
+    "Education details"
   ];
 
   return (
@@ -47,14 +67,16 @@ export default function ChatInterface() {
       {!hasStarted && (
         <div className="flex-1 flex flex-col items-center justify-center p-4 text-center space-y-8 animate-in fade-in duration-500">
           <div className="space-y-4 max-w-2xl">
-            <div className="w-20 h-20 mx-auto bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-blue-500/20">
-              <span className="text-4xl">👨‍💻</span>
+            <div className={`w-20 h-20 mx-auto rounded-3xl flex items-center justify-center shadow-2xl ${isPortfolio ? 'bg-gradient-to-br from-blue-500 to-purple-600 shadow-blue-500/20' : 'bg-gray-800 shadow-gray-500/20'}`}>
+              <span className="text-4xl">{isPortfolio ? '👨‍💻' : '📄'}</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-400">
-              Keshav Tejra
+              {isPortfolio ? "Keshav Tejra" : `Chat with ${resumeName}`}
             </h1>
             <p className="text-lg text-gray-600 dark:text-gray-300 max-w-lg mx-auto leading-relaxed">
-              Chat with my resume to learn about my experience, skills, and projects.
+              {isPortfolio 
+                ? "Chat with my resume to learn about my experience, skills, and projects."
+                : "Ask questions to extract insights from this resume."}
             </p>
           </div>
 
@@ -78,36 +100,58 @@ export default function ChatInterface() {
       {hasStarted && (
         <div className="flex-1 overflow-y-auto p-4 space-y-6">
           <AnimatePresence>
-            {messages.map((msg, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={`flex items-start gap-4 ${msg.isBot ? 'justify-start' : 'justify-end'}`}
-              >
-                {msg.isBot && (
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0 shadow-lg">
-                    <Bot className="w-5 h-5 text-white" />
-                  </div>
-                )}
-                
-                <div
-                  className={`max-w-[85%] p-4 rounded-2xl shadow-sm ${
-                    msg.isBot
-                      ? 'bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-gray-800 dark:text-gray-100 rounded-tl-none'
-                      : 'bg-blue-600 text-white rounded-tr-none'
-                  } ${msg.isError ? 'bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-800 text-red-600 dark:text-red-400' : ''}`}
-                >
-                  <p className="text-sm md:text-base leading-relaxed whitespace-pre-wrap">{msg.text}</p>
-                </div>
+            {messages.map((msg, index) => {
+              const { mainText, followUps } = msg.isBot ? parseMessage(msg.text) : { mainText: msg.text, followUps: [] };
 
-                {!msg.isBot && (
-                  <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
-                    <User className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+              return (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`flex flex-col gap-2 ${msg.isBot ? 'items-start' : 'items-end'}`}
+                >
+                  <div className={`flex items-start gap-4 ${msg.isBot ? 'justify-start' : 'justify-end'}`}>
+                    {msg.isBot && (
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0 shadow-lg">
+                        <Bot className="w-5 h-5 text-white" />
+                      </div>
+                    )}
+                    
+                    <div
+                      className={`max-w-[85%] p-4 rounded-2xl shadow-sm ${
+                        msg.isBot
+                          ? 'bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-gray-800 dark:text-gray-100 rounded-tl-none'
+                          : 'bg-blue-600 text-white rounded-tr-none'
+                      } ${msg.isError ? 'bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-800 text-red-600 dark:text-red-400' : ''}`}
+                    >
+                      <p className="text-sm md:text-base leading-relaxed whitespace-pre-wrap">{mainText}</p>
+                    </div>
+
+                    {!msg.isBot && (
+                      <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+                        <User className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                      </div>
+                    )}
                   </div>
-                )}
-              </motion.div>
-            ))}
+
+                  {/* Follow-up Chips */}
+                  {msg.isBot && followUps && followUps.length > 0 && (
+                    <div className="flex flex-wrap gap-2 ml-12 mt-1">
+                      {followUps.map((q, i) => (
+                        <button
+                          key={i}
+                          onClick={() => handleSuggestionClick(q)}
+                          className="px-3 py-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors flex items-center gap-1"
+                        >
+                          <Sparkles className="w-3 h-3" />
+                          {q}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </motion.div>
+              );
+            })}
           </AnimatePresence>
           
           {isTyping && (
@@ -126,13 +170,13 @@ export default function ChatInterface() {
 
       {/* Input Area (Fixed at bottom) */}
       <div className="p-4 md:p-6 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-t border-gray-200 dark:border-gray-800">
-        <div className="max-w-3xl mx-auto">
-            <form onSubmit={handleSubmit} className="relative flex items-center">
+        <div className="max-w-3xl mx-auto flex items-center gap-3">
+            <form onSubmit={handleSubmit} className="relative flex-1 flex items-center">
             <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder={hasStarted ? "Ask a follow-up question..." : "Ask anything about Keshav..."}
+                placeholder={hasStarted ? "Ask a follow-up question..." : `Ask anything about ${isPortfolio ? "Keshav" : "this resume"}...`}
                 className="w-full p-4 pr-14 rounded-2xl bg-gray-100 dark:bg-gray-800 border-transparent focus:bg-white dark:focus:bg-gray-900 border focus:border-blue-500 dark:focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none text-gray-900 dark:text-white placeholder-gray-500"
             />
             <button
@@ -143,10 +187,10 @@ export default function ChatInterface() {
                 <Send className="w-5 h-5" />
             </button>
             </form>
-            <p className="text-center text-xs text-gray-400 mt-3">
-            AI can make mistakes. Please verify important information from the resume.
-            </p>
         </div>
+        <p className="text-center text-xs text-gray-400 mt-3">
+            AI can make mistakes. Please verify important information from the resume.
+        </p>
       </div>
     </div>
   );
