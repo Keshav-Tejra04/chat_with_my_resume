@@ -11,10 +11,15 @@ load_dotenv()
 app = FastAPI(title="Resume Chat API")
 
 # 3. Setup CORS
-origins = [
-    "http://localhost:5173",
-    "http://localhost:5174", 
-]
+# Get allowed origins from env var (comma separated) or default to localhost
+allowed_origins_env = os.getenv("ALLOWED_ORIGINS")
+if allowed_origins_env:
+    origins = [origin.strip() for origin in allowed_origins_env.split(",")]
+else:
+    origins = [
+        "http://localhost:5173",
+        "http://localhost:5174", 
+    ]
 
 app.add_middleware(
     CORSMiddleware,
