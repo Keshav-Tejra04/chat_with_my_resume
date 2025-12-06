@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { MessageSquare, Menu, X, Github, Linkedin, FileText, Info, Upload, RotateCcw } from 'lucide-react';
+import { MessageSquare, Menu, X, Github, Linkedin, FileText, Info, Upload, RotateCcw, Download, RefreshCw } from 'lucide-react';
+import { API_BASE_URL } from '../api';
 import ThemeToggle from './ThemeToggle';
 import FileUpload from './FileUpload';
 import { useChat } from '../context/ChatContext';
@@ -76,6 +77,8 @@ export default function Layout({ children }) {
             </div>
           )}
 
+
+
         </div>
 
         <div className="p-6 border-t border-black/5 dark:border-white/5 space-y-4">
@@ -89,16 +92,21 @@ export default function Layout({ children }) {
                 </div>
             </div>
 
+
+
           <div className="flex items-center justify-between pt-2">
             <div className="flex gap-2">
-              <a href="#" className="p-2 hover:bg-gray-200 dark:hover:bg-[#2f2f2f] rounded-xl transition-colors text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white">
+              <a href="https://github.com/Keshav-Tejra04/" target="_blank" rel="noopener noreferrer" className="p-2 hover:bg-gray-200 dark:hover:bg-[#2f2f2f] rounded-xl transition-colors text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white">
                 <Github className="w-5 h-5" />
               </a>
-              <a href="#" className="p-2 hover:bg-gray-200 dark:hover:bg-[#2f2f2f] rounded-xl transition-colors text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">
+              <a href="https://www.linkedin.com/in/keshav-tejra/" target="_blank" rel="noopener noreferrer" className="p-2 hover:bg-gray-200 dark:hover:bg-[#2f2f2f] rounded-xl transition-colors text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">
                 <Linkedin className="w-5 h-5" />
               </a>
+              <a href={`${API_BASE_URL}/download-resume`} download className="flex items-center gap-2 px-3 py-2 hover:bg-gray-200 dark:hover:bg-[#2f2f2f] rounded-xl transition-colors text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400" title="Download Resume">
+                <Download className="w-5 h-5 flex-shrink-0" />
+                <span className="text-sm font-medium whitespace-nowrap">Download My Resume</span>
+              </a>
             </div>
-            <ThemeToggle />
           </div>
         </div>
       </motion.aside>
@@ -114,6 +122,19 @@ export default function Layout({ children }) {
           </button>
           <span className="ml-4 font-semibold">Chat</span>
         </header>
+
+        {/* Desktop Reset Chat & Theme Toggle Button (Top Right) */}
+        <div className="absolute top-4 right-4 z-40 flex items-center gap-2">
+            <ThemeToggle />
+            <button 
+                onClick={resetToDefault}
+                className="p-2 flex items-center gap-2 bg-white/80 dark:bg-[#2f2f2f]/80 backdrop-blur-sm border border-black/5 dark:border-white/5 shadow-sm rounded-xl text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-[#3f3f3f] transition-all"
+                title="Reset Chat"
+            >
+                <RefreshCw className="w-4 h-4" />
+                <span className="hidden lg:inline">Reset</span>
+            </button>
+        </div>
 
         <div className="flex-1 overflow-hidden relative">
           {children}

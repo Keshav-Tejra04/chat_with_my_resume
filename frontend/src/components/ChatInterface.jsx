@@ -3,6 +3,8 @@ import { Send, User, Bot, Loader2, Sparkles, MessageSquare, FileText } from 'luc
 import { useChat } from '../context/ChatContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import { API_BASE_URL } from '../api';
+
 export default function ChatInterface() {
   const { messages, sendMessage, isTyping, resumeName } = useChat();
   const [input, setInput] = useState('');
@@ -29,6 +31,15 @@ export default function ChatInterface() {
   };
 
   const handleSuggestionClick = (suggestion) => {
+    if (suggestion === "Download My Resume") {
+      const link = document.createElement('a');
+      link.href = `${API_BASE_URL}/download-resume`;
+      link.download = 'Keshav_Tejra_Resume.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      return;
+    }
     sendMessage(suggestion);
   };
 
@@ -52,7 +63,7 @@ export default function ChatInterface() {
     "What are your core skills?",
     "Tell me about your projects",
     "What is your experience?",
-    "Download Resume"
+    "Download My Resume"
   ] : [
     "Summarize this resume",
     "What are the key skills?",

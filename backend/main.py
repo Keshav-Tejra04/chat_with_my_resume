@@ -29,9 +29,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from fastapi.staticfiles import StaticFiles
+
 # 4. Include Routers
 app.include_router(chat.router, prefix="/api")
+
+# 5. Serve Static Files (Uploads)
+# Ensure uploads directory exists
+os.makedirs("uploads", exist_ok=True)
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 @app.get("/")
 def read_root():
     return {"status": "Backend is running"}
+
+from fastapi.responses import FileResponse
+
+@app.get("/api/download-resume")
+async def download_resume():
+    file_path = "uploads/Keshav_Tejra_Resume.pdf"
+    if os.path.exists(file_path):
+        return FileResponse(file_path, filename="Keshav_Tejra_Resume.pdf", media_type="application/pdf")
+    return {"error": "Resume not found"}
