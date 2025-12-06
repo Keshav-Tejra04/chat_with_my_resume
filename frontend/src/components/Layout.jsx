@@ -102,7 +102,13 @@ export default function Layout({ children }) {
               <a href="https://www.linkedin.com/in/keshav-tejra/" target="_blank" rel="noopener noreferrer" className="p-2 hover:bg-gray-200 dark:hover:bg-[#2f2f2f] rounded-xl transition-colors text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">
                 <Linkedin className="w-5 h-5" />
               </a>
-              <a href={`${API_BASE_URL}/download-resume`} download className="flex items-center gap-2 px-3 py-2 hover:bg-gray-200 dark:hover:bg-[#2f2f2f] rounded-xl transition-colors text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400" title="Download Resume">
+              <a 
+                href={`${API_BASE_URL}/download-resume`} 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-3 py-2 hover:bg-gray-200 dark:hover:bg-[#2f2f2f] rounded-xl transition-colors text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400" 
+                title="Download Resume"
+              >
                 <Download className="w-5 h-5 flex-shrink-0" />
                 <span className="text-sm font-medium whitespace-nowrap">Download My Resume</span>
               </a>

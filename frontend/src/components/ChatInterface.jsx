@@ -32,12 +32,7 @@ export default function ChatInterface() {
 
   const handleSuggestionClick = (suggestion) => {
     if (suggestion === "Download My Resume") {
-      const link = document.createElement('a');
-      link.href = `${API_BASE_URL}/download-resume`;
-      link.download = 'Keshav_Tejra_Resume.pdf';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      window.open(`${API_BASE_URL}/download-resume`, '_blank');
       return;
     }
     sendMessage(suggestion);
