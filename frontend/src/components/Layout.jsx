@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { MessageSquare, Menu, X, Github, Linkedin, FileText, Info, Upload, RotateCcw, Download, RefreshCw } from 'lucide-react';
 import { API_BASE_URL } from '../api';
 import ThemeToggle from './ThemeToggle';
@@ -9,6 +10,25 @@ import { motion, AnimatePresence } from 'framer-motion';
 export default function Layout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { resumeName, resetToDefault } = useChat();
+
+  const handleDownload = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.get(`${API_BASE_URL}/download-resume`, {
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'Keshav_Tejra_Resume.pdf');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Download failed", error);
+    }
+  };
 
   return (
     <div className="flex h-screen bg-gray-200 dark:bg-[#212121] text-gray-800 dark:text-gray-100 transition-colors duration-300 overflow-hidden font-sans">
@@ -103,9 +123,8 @@ export default function Layout({ children }) {
                 <Linkedin className="w-5 h-5" />
               </a>
               <a 
-                href={`${API_BASE_URL}/download-resume`} 
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#"
+                onClick={handleDownload}
                 className="flex items-center gap-2 px-3 py-2 hover:bg-gray-200 dark:hover:bg-[#2f2f2f] rounded-xl transition-colors text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400" 
                 title="Download Resume"
               >

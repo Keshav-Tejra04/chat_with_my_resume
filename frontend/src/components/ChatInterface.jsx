@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, User, Bot, Loader2, Sparkles, MessageSquare, FileText } from 'lucide-react';
+import axios from 'axios';
 import { useChat } from '../context/ChatContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -30,9 +31,23 @@ export default function ChatInterface() {
     setInput('');
   };
 
-  const handleSuggestionClick = (suggestion) => {
+  const handleSuggestionClick = async (suggestion) => {
     if (suggestion === "Download My Resume") {
-      window.open(`${API_BASE_URL}/download-resume`, '_blank');
+      try {
+        const response = await axios.get(`${API_BASE_URL}/download-resume`, {
+          responseType: 'blob',
+        });
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'Keshav_Tejra_Resume.pdf');
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error("Download failed", error);
+      }
       return;
     }
     sendMessage(suggestion);
